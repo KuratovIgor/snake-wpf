@@ -44,7 +44,7 @@ namespace SnakeGame
 
             _snake = new Snake(100, 100);
             _bot = new Snake(200, 200, true);
-            _food.Add(new Food(foodX, foodY));
+            _food.Add(new Food(_rd.Next(0, 37) * 10, _rd.Next(0, 35) * 10));
 
             _time.Interval = new TimeSpan(0, 0, 0, 0, 100);
             _time.Tick += GameProcess;
@@ -90,6 +90,7 @@ namespace SnakeGame
             BotProcess();
 
             FoodHunt();
+            RanIntoBot();
 
             if (_snake.Direction != 0)
             {
@@ -114,11 +115,32 @@ namespace SnakeGame
         {
             if (_snake.IsEat(_food) || _bot.IsEat(_food))
             {
+                if (_snake.IsEat(_food))
+                    _score++;
+
                 _food[0] = new Food(_rd.Next(0, 37) * 10, _rd.Next(0, 35) * 10);
                 gameField.Children.RemoveAt(0);
                 CreateFood();
-                _score++;
+
                 txtbScore.Text = _score.ToString();
+            }
+        }
+
+        private void RanIntoBot()
+        {
+            foreach (SnakeNode node in _bot.SnakeBody)
+            {
+                if (_snake.IsSnake(node))
+                {
+                    int bodyCount = _bot.SnakeBody.Count;
+                    int nodeIndex = _bot.SnakeBody.IndexOf(node);
+                    for (int i = bodyCount - 1; i >= nodeIndex; i--)
+                    {
+                        _bot.SnakeBody.RemoveAt(i);
+                    }
+
+                    break;
+                }
             }
         }
 
@@ -152,6 +174,18 @@ namespace SnakeGame
             CreateSnake();
             CreateFood();
             _time.Start();
+        }
+
+        private void Restart_Click(object sender, RoutedEventArgs e)
+        {
+            _snake = new Snake(100, 100);
+            _bot = new Snake(200, 200, true);
+
+            int foodX = _rd.Next(0, 37) * 10;
+            int foodY = _rd.Next(0, 35) * 10;
+            _food.Clear();
+            _food.Add(new Food(_rd.Next(0, 37) * 10, _rd.Next(0, 35) * 10));
+            CreateFood();
         }
     }
 }

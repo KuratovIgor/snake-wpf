@@ -4,12 +4,29 @@
         Title="SnakeShit" Height="600" Width="1200" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="7*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Canvas Name="gameField" Background="LightBlue"></Canvas>
         <Canvas Grid.Column="1">
-            <TextBlock Name="txtbScore" Canvas.Left="20" Canvas.Top="50">0</TextBlock>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" FontSize="30" Margin="10">Score</TextBlock>
+                    <TextBlock Grid.Column="1" FontSize="30" Margin="10" Name="txtbScore">0</TextBlock>
+                </Grid>
+
+                <Button Name="Restart" Grid.Row="1" Width="120" Height="50" Margin="10" FontSize="30" Click="Restart_Click">Restart</Button>
+            </Grid>
         </Canvas>
     </Grid>
 </Window>

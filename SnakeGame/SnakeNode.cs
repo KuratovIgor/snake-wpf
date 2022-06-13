@@ -14,9 +14,11 @@ namespace SnakeGame
     {
         public double x, y;
         public Rectangle rec = new Rectangle();
+        public bool isBot;
 
-        public SnakeNode(double x,double y)
+        public SnakeNode(double x,double y, bool isBot = false)
         {
+            this.isBot = isBot;
             this.x = x;
             this.y = y;
         }

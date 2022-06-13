@@ -26,7 +26,10 @@ namespace SnakeGame
             _x = x;
             _y = y;
 
-            SnakeBody.Add(new SnakeNode(x, y));
+            if (_isBot)
+                SnakeBody.Add(new SnakeNode(x, y, true));
+            else
+                SnakeBody.Add(new SnakeNode(x, y));
         }
 
         public bool IsEat(List<Food> food)
@@ -37,6 +40,14 @@ namespace SnakeGame
 
                 return true;
             }
+
+            return false;
+        }
+
+        public bool IsSnake(SnakeNode botNode)
+        {
+            if (SnakeBody[0].x == botNode.x && SnakeBody[0].y == botNode.y)
+                return true;
 
             return false;
         }
