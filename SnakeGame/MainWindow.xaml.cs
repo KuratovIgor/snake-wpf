@@ -39,12 +39,12 @@ namespace SnakeGame
         {
             InitializeComponent();
 
-            int foodX = _rd.Next(0, 37) * 10;
-            int foodY = _rd.Next(0, 35) * 10;
+            int foodX = _rd.Next(0, 70) * 10;
+            int foodY = _rd.Next(0, 45) * 10;
 
             _snake = new Snake(100, 100);
             _bot = new Snake(200, 200, true);
-            _food.Add(new Food(_rd.Next(0, 37) * 10, _rd.Next(0, 35) * 10));
+            _food.Add(new Food(foodX, foodY));
 
             _time.Interval = new TimeSpan(0, 0, 0, 0, 100);
             _time.Tick += GameProcess;
@@ -64,7 +64,10 @@ namespace SnakeGame
                 snake.SetSnakeNodePosition(Brushes.Red);
                 gameField.Children.Add(snake.rec);
             }
+        }
 
+        private void CreateBot()
+        {
             foreach (SnakeNode snake in _bot.SnakeBody)
             {
                 snake.SetSnakeNodePosition(Brushes.Green);
@@ -102,14 +105,24 @@ namespace SnakeGame
 
             if(_snake.IsLeftTheBorder() || _snake.IsMetTail())
             {
-                this.Close();
+                RestartGame();
             }
 
+            if (_score >= 15)
+            {
+                MessageBox.Show("You win!");
+                RestartGame();
+            }
 
             RedrawSnake();
         }
 
-        
+        private void EatTailNode(SnakeNode node)
+        {
+            _snake.EatTailNode(node);
+            _score++;
+            txtbScore.Text = _score.ToString();
+        }
 
         private void FoodHunt()
         {
@@ -118,7 +131,7 @@ namespace SnakeGame
                 if (_snake.IsEat(_food))
                     _score++;
 
-                _food[0] = new Food(_rd.Next(0, 37) * 10, _rd.Next(0, 35) * 10);
+                _food[0] = new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10);
                 gameField.Children.RemoveAt(0);
                 CreateFood();
 
@@ -136,7 +149,13 @@ namespace SnakeGame
                     int nodeIndex = _bot.SnakeBody.IndexOf(node);
                     for (int i = bodyCount - 1; i >= nodeIndex; i--)
                     {
+                        EatTailNode(_bot.SnakeBody[i]);
                         _bot.SnakeBody.RemoveAt(i);
+                    }
+
+                    if (_bot.SnakeBody.Count == 0)
+                    {
+                        CreateBot();
                     }
 
                     break;
@@ -155,37 +174,62 @@ namespace SnakeGame
             gameField.Children.RemoveRange(1, _countSnakeNode);
             _countSnakeNode = 0;
             CreateSnake();
+            CreateBot();
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up && _snake.Direction != _down)
-                _snake.Direction = _up;
-            if (e.Key == Key.Down && _snake.Direction != _up)
-                _snake.Direction = _down;
-            if (e.Key == Key.Left && _snake.Direction != _right)
-                _snake.Direction = _left;
-            if (e.Key == Key.Right && _snake.Direction != _left)
-                _snake.Direction = _right;
+            if (_snake.SnakeBody.Count == 1)
+            {
+                if (e.Key == Key.Up)
+                    _snake.Direction = _up;
+                if (e.Key == Key.Down)
+                    _snake.Direction = _down;
+                if (e.Key == Key.Left)
+                    _snake.Direction = _left;
+                if (e.Key == Key.Right)
+                    _snake.Direction = _right;
+            }
+            else
+            {
+                if (e.Key == Key.Up && _snake.Direction != _down)
+                    _snake.Direction = _up;
+                if (e.Key == Key.Down && _snake.Direction != _up)
+                    _snake.Direction = _down;
+                if (e.Key == Key.Left && _snake.Direction != _right)
+                    _snake.Direction = _left;
+                if (e.Key == Key.Right && _snake.Direction != _left)
+                    _snake.Direction = _right;
+            }
+        }
+
+        private void RestartGame()
+        {
+            _snake = new Snake(100, 100);
+            _bot = new Snake(200, 200, true);
+            _score = 0;
+
+            txtbScore.Text = _score.ToString();
+
+            int foodX = _rd.Next(0, 37) * 10;
+            int foodY = _rd.Next(0, 35) * 10;
+
+            _food.Clear();
+            _food.Add(new Food(_rd.Next(0, 37) * 10, _rd.Next(0, 35) * 10));
+            CreateFood();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             CreateSnake();
+            CreateBot();
             CreateFood();
             _time.Start();
         }
 
         private void Restart_Click(object sender, RoutedEventArgs e)
         {
-            _snake = new Snake(100, 100);
-            _bot = new Snake(200, 200, true);
-
-            int foodX = _rd.Next(0, 37) * 10;
-            int foodY = _rd.Next(0, 35) * 10;
-            _food.Clear();
-            _food.Add(new Food(_rd.Next(0, 37) * 10, _rd.Next(0, 35) * 10));
-            CreateFood();
+            RestartGame();
         }
     }
 }

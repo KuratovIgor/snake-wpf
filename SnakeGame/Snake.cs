@@ -44,6 +44,11 @@ namespace SnakeGame
             return false;
         }
 
+        public void EatTailNode(SnakeNode node)
+        {
+            SnakeBody.Add(new SnakeNode(node.x, node.y));
+        }
+
         public bool IsSnake(SnakeNode botNode)
         {
             if (SnakeBody[0].x == botNode.x && SnakeBody[0].y == botNode.y)
@@ -63,7 +68,7 @@ namespace SnakeGame
 
         public bool IsLeftTheBorder()
         {
-            return SnakeBody[0].x > 940 || SnakeBody[0].y > 550 || SnakeBody[0].x < 0 || SnakeBody[0].y < 0;
+            return SnakeBody[0].x > 700 || SnakeBody[0].y > 500 || SnakeBody[0].x < 0 || SnakeBody[0].y < 0;
         }
 
         public bool IsMetTail()

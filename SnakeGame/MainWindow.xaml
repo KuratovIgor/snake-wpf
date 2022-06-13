@@ -1,10 +1,10 @@
 ﻿<Window x:Class="SnakeGame.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SnakeShit" Height="600" Width="1200" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
+        Title="SnakeShit" Height="500" Width="900" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Canvas Name="gameField" Background="LightBlue"></Canvas>
