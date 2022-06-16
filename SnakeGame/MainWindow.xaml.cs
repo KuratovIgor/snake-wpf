@@ -33,27 +33,40 @@ namespace SnakeGame
         private int _down = 4;
 
         private int _score = 0;
-        private int _countSnakeNode = 0;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            int foodX = _rd.Next(0, 70) * 10;
-            int foodY = _rd.Next(0, 45) * 10;
-
             _snake = new Snake(100, 100);
             _bot = new Snake(200, 200, true);
-            _food.Add(new Food(foodX, foodY));
+
+            _food.Add(new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10));
+            _food.Add(new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10));
+            _food.Add(new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10));
+            _food.Add(new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10));
+            _food.Add(new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10));
+            _food.Add(new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10));
 
             _time.Interval = new TimeSpan(0, 0, 0, 0, 100);
             _time.Tick += GameProcess;
         }
 
-        private void CreateFood()
+        private void CreateFood(int index = -1)
         {
-            _food[0].SetFoodPosition();
-            gameField.Children.Insert(0, _food[0].ell);
+            if (index == -1)
+            {
+                foreach (Food food in _food)
+                {
+                    food.SetFoodPosition();
+                    gameField.Children.Add(food.ell);
+                }
+            }
+            else
+            {
+                _food[index].SetFoodPosition();
+                gameField.Children.Insert(index, _food[index].ell);
+            }
         }
 
 
@@ -126,16 +139,23 @@ namespace SnakeGame
 
         private void FoodHunt()
         {
-            if (_snake.IsEat(_food) || _bot.IsEat(_food))
+            for (int i = 0; i < _food.Count; i++)
             {
-                if (_snake.IsEat(_food))
-                    _score++;
+                if (_snake.IsEat(_food[i]) || _bot.IsEat(_food[i]))
+                {
+                    if (_snake.IsEat(_food[i]))
+                        _score++;
+                    else
+                        _bot.ChangeFoodHunted(_food.Count);
 
-                _food[0] = new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10);
-                gameField.Children.RemoveAt(0);
-                CreateFood();
+                    _food[i] = new Food(_rd.Next(0, 70) * 10, _rd.Next(0, 45) * 10);
+                    gameField.Children.RemoveAt(i);
+                    CreateFood(i);
 
-                txtbScore.Text = _score.ToString();
+                    txtbScore.Text = _score.ToString();
+
+                    break;
+                }
             }
         }
 
@@ -165,14 +185,23 @@ namespace SnakeGame
 
         private void RedrawSnake()
         {
+            List<int> snakeIndexes = new List<int>();
+
             for (int i = 0; i < gameField.Children.Count; i++)
             {
                 if (gameField.Children[i] is Rectangle)
-                    _countSnakeNode++;
+                {
+                    snakeIndexes.Add(i);
+                }
             }
 
-            gameField.Children.RemoveRange(1, _countSnakeNode);
-            _countSnakeNode = 0;
+            snakeIndexes.Reverse();
+
+            foreach(int index in  snakeIndexes)
+            {
+                gameField.Children.RemoveAt(index);
+            }
+
             CreateSnake();
             CreateBot();
         }

@@ -16,6 +16,9 @@ namespace SnakeGame
         private int _up = 3;
         private int _down = 4;
 
+        private Random _foodIndexRand = new Random();
+        private int _foodHuntedIndex = 0;
+
         public int Direction { get; set; }
 
         public List<SnakeNode> SnakeBody { get; private set; } = new List<SnakeNode>();
@@ -32,11 +35,11 @@ namespace SnakeGame
                 SnakeBody.Add(new SnakeNode(x, y));
         }
 
-        public bool IsEat(List<Food> food)
+        public bool IsEat(Food food)
         {
-            if (SnakeBody[0].x == food[0].x && SnakeBody[0].y == food[0].y)
+            if (SnakeBody[0].x == food.x && SnakeBody[0].y == food.y)
             {
-                SnakeBody.Add(new SnakeNode(food[0].x, food[0].y));
+                SnakeBody.Add(new SnakeNode(food.x, food.y));
 
                 return true;
             }
@@ -55,6 +58,11 @@ namespace SnakeGame
                 return true;
 
             return false;
+        }
+
+        public void ChangeFoodHunted(int foodCount)
+        {
+            _foodHuntedIndex = _foodIndexRand.Next(0, foodCount);
         }
 
         public void Move()
@@ -88,13 +96,13 @@ namespace SnakeGame
         {
             if (_isBot)
             {
-                if (food[0].x < SnakeBody[0].x)
+                if (food[_foodHuntedIndex].x < SnakeBody[0].x)
                     Direction = 1;
-                if (food[0].x > SnakeBody[0].x)
+                if (food[_foodHuntedIndex].x > SnakeBody[0].x)
                     Direction = 2;
-                if (food[0].y < SnakeBody[0].y)
+                if (food[_foodHuntedIndex].y < SnakeBody[0].y)
                     Direction = 3;
-                if (food[0].y > SnakeBody[0].y)
+                if (food[_foodHuntedIndex].y > SnakeBody[0].y)
                     Direction = 4;
 
                 if (Direction == _up)
